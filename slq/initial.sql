@@ -1,4 +1,6 @@
-CREATE SCHEMA `toycars` ;
+CREATE SCHEMA `toyscars` ;
+
+USE `toyscars`;
 
 CREATE TABLE Clientes (
     cliente_id INT AUTO_INCREMENT PRIMARY KEY,
