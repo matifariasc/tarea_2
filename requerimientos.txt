@@ -1,0 +1,13 @@
+Mysql
+
+Workbench 8.0.36
+https://dev.mysql.com/downloads/file/?id=525959
+SQL Server 8.0.37
+https://dev.mysql.com/downloads/file/?id=528489
+
+Apache NetBeans 18
+https://netbeans.apache.org/front/main/download/nb18/
+
+java JDK Development
+https://www.oracle.com/java/technologies/downloads/#jdk22-windows
+
