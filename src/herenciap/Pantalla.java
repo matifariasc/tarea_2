@@ -4,6 +4,10 @@
  */
 package herenciap;
 
+import java.util.Map;
+import java.util.HashMap;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author mfarias
@@ -13,7 +17,53 @@ public class Pantalla extends javax.swing.JFrame {
     private String[] marcasAuto = {"Toyota","Hyunday" ,"Susuki", "Ford", "Chevrolet","Honda"};
     private String[] marcasMoto = {"Yamaha", "Suzuki", "Honda","KTM","BMW","Kawasaki"};
     private String[] marcasCamion = {"Volvo","Iveco","Mercedes","Isuzu", "MAN","Scania"};
+    
+    private String[] accesoriosAuto = {"Sin elegir","Puertas", "Luces"};
+    private String[] accesoriosMoto = {"Sin elegir","Pedales", "Espejos"};
+    private String[] accesoriosCamion = {"Sin elegir","Tolva", "Ejes"};
+    
+    private Map<String, Integer> preciosAccesoriosAuto = Map.of(
+        "Puertas", 1000,
+        "Luces", 600
+    );
 
+    private Map<String, Integer> preciosAccesoriosMoto = Map.of(
+        "Pedales", 1000,
+        "Espejos", 8000
+    );
+
+    private Map<String, Integer> preciosAccesoriosCamion = Map.of(
+        "Tolva o Caja", 10000,
+        "Ejes", 8000
+    );
+
+    private Map<String, Integer> preciosMarcasAuto = Map.of(
+        "Toyota", 19000,
+        "Hyundai", 16000,
+        "Suzuki", 12000,
+        "Ford", 17000,
+        "Chevrolet", 18000,
+        "Honda", 21000
+    );
+
+    private Map<String, Integer> preciosMarcasMoto = Map.of(
+        "Yamaha", 14000,
+        "Suzuki", 8000,
+        "Honda", 15000,
+        "KTM", 5000,
+        "BMW", 18000,
+        "Kawasaki", 13000
+    );
+
+    private Map<String, Integer> preciosMarcasCamion = Map.of(
+        "Volvo", 100000,
+        "Iveco", 85000,
+        "Mercedes", 110000,
+        "Isuzu", 70000,
+        "MAN", 105000,
+        "Scania", 95000
+    );
+    private int currentRow = -1;
     /**
      * Creates new form Pantalla
      */
@@ -32,6 +82,7 @@ public class Pantalla extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         grupoBotones = new javax.swing.ButtonGroup();
+        grupobotones_remoto = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -151,11 +202,14 @@ public class Pantalla extends javax.swing.JFrame {
 
         jLabel3.setText("VEHICULO");
 
-        tipo_accesorios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        tipo_accesorios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipo_accesoriosActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("ACCESORIOS");
 
-        tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         tipo_marca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tipo_marcaActionPerformed(evt);
@@ -192,6 +246,7 @@ public class Pantalla extends javax.swing.JFrame {
 
         jLabel12.setText("CONTROL REMOTO");
 
+        grupobotones_remoto.add(control_si);
         control_si.setText("SI");
         control_si.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,6 +254,7 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
+        grupobotones_remoto.add(control_no);
         control_no.setText("NO");
         control_no.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -327,20 +383,31 @@ public class Pantalla extends javax.swing.JFrame {
                 .addGap(48, 48, 48))
         );
 
+        subtotal.setEditable(false);
+
+        total.setEditable(false);
+
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "VEHICULO", "MARCA", "ACCESORIO", "CONTROL", "AÑO", "PRECIO", "CANTIDAD", "IMPORTE"
+                "VEHICULO", "MARCA", "ACC 1", "CANT", "ACC 2", "CANT", "CONTROL", "AÑO", "PRECIO", "CANTIDAD", "IMPORTE"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true, true, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         jLabel13.setText("SUBTOTAL");
+
+        descuento.setEditable(false);
 
         jLabel14.setText("DESCUENTO");
 
@@ -391,11 +458,14 @@ public class Pantalla extends javax.swing.JFrame {
 
         jLabel11.setText("VENTAS TOTALES");
 
+        vental_total.setEditable(false);
         vental_total.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 vental_totalActionPerformed(evt);
             }
         });
+
+        ventas_hoy.setEditable(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -536,12 +606,134 @@ public class Pantalla extends javax.swing.JFrame {
         control_no.setEnabled(true);
         tipo_vehiculo.setEnabled(true);
         tipo_accesorios.setEnabled(false);
+        text_año.setEnabled(true);
     }//GEN-LAST:event_boton_vehiculoActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
         // TODO add your handling code here:
+        String vehiculo = (String) tipo_vehiculo.getSelectedItem();
+        String marca = (String) tipo_marca.getSelectedItem();
+        String accesorio = (String) tipo_accesorios.getSelectedItem();
+        String control = control_si.isSelected() ? "SI" : "NO";
+        String anio = text_año.getText();
+        String cantidadStr = text_cantidad.getText();
+
+        if (boton_vehiculo.isSelected()) {
+            // Validar que vehículo, año y cantidad estén llenos y sean numéricos
+            if (vehiculo.equals("Seleccionar") || marca.equals("Item 1") || anio.isEmpty() || cantidadStr.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Por favor complete todos los campos requeridos.");
+                return;
+            }
+            if (!anio.matches("\\d+") || !cantidadStr.matches("\\d+")) {
+                javax.swing.JOptionPane.showMessageDialog(this, "El año y la cantidad deben ser números.");
+                return;
+            }
+        } else if (boton_accesorios.isSelected()) {
+            // Validar que la cantidad esté llena y sea numérica
+            if (cantidadStr.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Por favor ingrese la cantidad.");
+                return;
+            }
+            if (!cantidadStr.matches("\\d+")) {
+                javax.swing.JOptionPane.showMessageDialog(this, "La cantidad debe ser un número.");
+                return;
+            }
+        }
+
+        int cantidad = Integer.parseInt(cantidadStr);
+        int precioAccesorio = 0;
+        int precioMarca = 0;
+
+        switch (vehiculo.toLowerCase()) {
+            case "auto":
+                precioMarca = preciosMarcasAuto.getOrDefault(marca, 0);
+                precioAccesorio = preciosAccesoriosAuto.getOrDefault(accesorio, 0);
+                break;
+            case "moto":
+                precioMarca = preciosMarcasMoto.getOrDefault(marca, 0);
+                precioAccesorio = preciosAccesoriosMoto.getOrDefault(accesorio, 0);
+                break;
+            case "camion":
+                precioMarca = preciosMarcasCamion.getOrDefault(marca, 0);
+                precioAccesorio = preciosAccesoriosCamion.getOrDefault(accesorio, 0);
+                break;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+
+        if (boton_vehiculo.isSelected()) {
+            currentRow = model.getRowCount();
+            model.addRow(new Object[]{vehiculo, marca, "-", 0, "-", 0, control, anio, precioMarca, cantidad, precioMarca * cantidad});
+        } else if (boton_accesorios.isSelected()) {
+            boolean found = false;
+            for (int i = 0; i < model.getRowCount(); i++) {
+                if (model.getValueAt(i, 0).equals(vehiculo) && model.getValueAt(i, 1).equals(marca)) {
+                    found = true;
+                    currentRow = i;
+                    break;
+                }
+            }
+
+            if (!found) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un vehículo existente para agregar accesorios.");
+                return; // Salir del método si no se encuentra un vehículo correspondiente
+            }
+
+            String acc1 = (String) model.getValueAt(currentRow, 2);
+            int cant1 = (int) model.getValueAt(currentRow, 3);
+            String acc2 = (String) model.getValueAt(currentRow, 4);
+            int cant2 = (int) model.getValueAt(currentRow, 5);
+
+            if (esAccesorio1(accesorio)) {
+                if (acc1.equals("-") || acc1.equals(accesorio)) {
+                    model.setValueAt(accesorio, currentRow, 2);
+                    model.setValueAt(cant1 + cantidad, currentRow, 3);
+                } else if (!acc1.equals(accesorio) && acc2.equals("-")) {
+                    model.setValueAt(accesorio, currentRow, 4);
+                    model.setValueAt(cantidad, currentRow, 5);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Ya existen dos accesorios diferentes para este vehículo.");
+                    return;
+                }
+            } else if (esAccesorio2(accesorio)) {
+                if (acc2.equals("-") || acc2.equals(accesorio)) {
+                    model.setValueAt(accesorio, currentRow, 4);
+                    model.setValueAt(cant2 + cantidad, currentRow, 5);
+                } else if (!acc2.equals(accesorio) && acc1.equals("-")) {
+                    model.setValueAt(accesorio, currentRow, 2);
+                    model.setValueAt(cantidad, currentRow, 3);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Ya existen dos accesorios diferentes para este vehículo.");
+                    return;
+                }
+            }
+
+            int precioTotal = (int) model.getValueAt(currentRow, 8) + precioAccesorio * cantidad;
+            model.setValueAt(precioTotal, currentRow, 8);
+            int cantidadTotal = (int) model.getValueAt(currentRow, 9) + cantidad;
+            model.setValueAt(cantidadTotal, currentRow, 9);
+            model.setValueAt(precioTotal * cantidadTotal, currentRow, 10);
+
+            currentRow = -1;  // Reset current row after adding accessories
+        }
+
+        // Limpiar los campos de texto
+        if (tipo_accesorios.getItemCount() > 0) {
+            tipo_accesorios.setSelectedIndex(0);
+        }
+        control_si.setSelected(false);
+        control_no.setSelected(false);
+        text_año.setText("");
+        text_cantidad.setText("");
     }//GEN-LAST:event_agregarActionPerformed
 
+private boolean esAccesorio1(String accesorio) {
+    return accesorio.equals("Puertas") || accesorio.equals("Pedales") || accesorio.equals("Tolva");
+}
+
+private boolean esAccesorio2(String accesorio) {
+    return accesorio.equals("Luces") || accesorio.equals("Espejos") || accesorio.equals("Ejes");
+}
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_guardarActionPerformed
@@ -576,10 +768,11 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void boton_accesoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_accesoriosActionPerformed
         // TODO add your handling code here:
-        control_si.setEnabled(false);
+         control_si.setEnabled(false);
         control_no.setEnabled(false);
         tipo_vehiculo.setEnabled(false);
         tipo_accesorios.setEnabled(true);
+        text_año.setEnabled(false);
     }//GEN-LAST:event_boton_accesoriosActionPerformed
 
     private void tipo_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_marcaActionPerformed
@@ -594,18 +787,26 @@ public class Pantalla extends javax.swing.JFrame {
         switch (tipo.toLowerCase()) {
             case "auto":
                 tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasAuto));
+                tipo_accesorios.setModel(new javax.swing.DefaultComboBoxModel<>(accesoriosAuto));
                 break;
             case "moto":
                 tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasMoto));
+                tipo_accesorios.setModel(new javax.swing.DefaultComboBoxModel<>(accesoriosMoto));
                 break;
             case "camion":
                 tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasCamion));
+                tipo_accesorios.setModel(new javax.swing.DefaultComboBoxModel<>(accesoriosCamion));
                 break;
             default:
                 tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{}));
+                tipo_accesorios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{}));
                 break;
         }
     }//GEN-LAST:event_tipo_vehiculoActionPerformed
+
+    private void tipo_accesoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_accesoriosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tipo_accesoriosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -656,6 +857,7 @@ public class Pantalla extends javax.swing.JFrame {
     private javax.swing.JRadioButton control_si;
     private javax.swing.JTextField descuento;
     private javax.swing.ButtonGroup grupoBotones;
+    private javax.swing.ButtonGroup grupobotones_remoto;
     private javax.swing.JButton guardar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

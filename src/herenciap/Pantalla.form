@@ -19,6 +19,8 @@
     </Container>
     <Component class="javax.swing.ButtonGroup" name="grupoBotones">
     </Component>
+    <Component class="javax.swing.ButtonGroup" name="grupobotones_remoto">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -305,9 +307,6 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="boton_vehiculo">
           <Properties>
-            <Property name="model" type="javax.swing.ButtonModel" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="default"/>
-            </Property>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="grupoBotones"/>
             </Property>
@@ -320,9 +319,6 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="boton_accesorios">
           <Properties>
-            <Property name="model" type="javax.swing.ButtonModel" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="default"/>
-            </Property>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="grupoBotones"/>
             </Property>
@@ -355,14 +351,12 @@
         <Component class="javax.swing.JComboBox" name="tipo_accesorios">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tipo_accesoriosActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -375,12 +369,7 @@
         <Component class="javax.swing.JComboBox" name="tipo_marca">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
           <Events>
@@ -444,6 +433,9 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="control_si">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="grupobotones_remoto"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="SI"/>
           </Properties>
           <Events>
@@ -452,6 +444,9 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="control_no">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="grupobotones_remoto"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="NO"/>
           </Properties>
           <Events>
@@ -461,8 +456,14 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JTextField" name="subtotal">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="total">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -474,15 +475,18 @@
         <Component class="javax.swing.JTable" name="tabla">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="8" rowCount="4">
-                <Column editable="true" title="VEHICULO" type="java.lang.Object"/>
-                <Column editable="true" title="MARCA" type="java.lang.Object"/>
-                <Column editable="true" title="ACCESORIO" type="java.lang.Object"/>
-                <Column editable="true" title="CONTROL" type="java.lang.Object"/>
-                <Column editable="true" title="A&#xd1;O" type="java.lang.Object"/>
-                <Column editable="true" title="PRECIO" type="java.lang.Object"/>
-                <Column editable="true" title="CANTIDAD" type="java.lang.Object"/>
-                <Column editable="true" title="IMPORTE" type="java.lang.Object"/>
+              <Table columnCount="11" rowCount="0">
+                <Column editable="false" title="VEHICULO" type="java.lang.Object"/>
+                <Column editable="false" title="MARCA" type="java.lang.Object"/>
+                <Column editable="true" title="ACC 1" type="java.lang.Object"/>
+                <Column editable="true" title="CANT" type="java.lang.Object"/>
+                <Column editable="true" title="ACC 2" type="java.lang.Object"/>
+                <Column editable="false" title="CANT" type="java.lang.Object"/>
+                <Column editable="false" title="CONTROL" type="java.lang.Object"/>
+                <Column editable="false" title="A&#xd1;O" type="java.lang.Object"/>
+                <Column editable="false" title="PRECIO" type="java.lang.Object"/>
+                <Column editable="false" title="CANTIDAD" type="java.lang.Object"/>
+                <Column editable="false" title="IMPORTE" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -542,6 +546,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="descuento">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel14">
       <Properties>
@@ -702,11 +709,17 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="vental_total">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="vental_totalActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="ventas_hoy">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
