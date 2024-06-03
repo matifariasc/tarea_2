@@ -54,7 +54,7 @@
                   <Group type="102" attributes="0">
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jPanel3" min="-2" pref="370" max="-2" attributes="0"/>
+                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="jScrollPane1" min="-2" pref="837" max="-2" attributes="0"/>
@@ -478,12 +478,12 @@
               <Table columnCount="11" rowCount="0">
                 <Column editable="false" title="VEHICULO" type="java.lang.Object"/>
                 <Column editable="false" title="MARCA" type="java.lang.Object"/>
-                <Column editable="true" title="ACC 1" type="java.lang.Object"/>
-                <Column editable="true" title="CANT" type="java.lang.Object"/>
-                <Column editable="true" title="ACC 2" type="java.lang.Object"/>
+                <Column editable="false" title="ACC 1" type="java.lang.Object"/>
+                <Column editable="false" title="CANT" type="java.lang.Object"/>
+                <Column editable="false" title="ACC 2" type="java.lang.Object"/>
                 <Column editable="false" title="CANT" type="java.lang.Object"/>
                 <Column editable="false" title="CONTROL" type="java.lang.Object"/>
-                <Column editable="false" title="A&#xd1;O" type="java.lang.Object"/>
+                <Column editable="true" title="A&#xd1;O" type="java.lang.Object"/>
                 <Column editable="false" title="PRECIO" type="java.lang.Object"/>
                 <Column editable="false" title="CANTIDAD" type="java.lang.Object"/>
                 <Column editable="false" title="IMPORTE" type="java.lang.Object"/>
@@ -573,42 +573,24 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="boton_ano" min="-2" max="-2" attributes="0"/>
-                                      <Component id="boton_remoto" min="-2" max="-2" attributes="0"/>
-                                      <Component id="boton_marca" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="boton_auto" min="-2" max="-2" attributes="0"/>
-                                      <Component id="boton_camion" min="-2" max="-2" attributes="0"/>
-                                      <Component id="boton_moto" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
+                              <Component id="boton_ano" min="-2" max="-2" attributes="0"/>
+                              <Component id="boton_remoto" min="-2" max="-2" attributes="0"/>
+                              <Component id="boton_marca" min="-2" max="-2" attributes="0"/>
+                              <Component id="limpiar_tabla" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="ventas_hoy" min="-2" pref="72" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="vental_total" min="-2" pref="72" max="-2" attributes="0"/>
-                              </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="boton_auto" min="-2" max="-2" attributes="0"/>
+                              <Component id="boton_camion" min="-2" max="-2" attributes="0"/>
+                              <Component id="boton_moto" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="104" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <EmptySpace pref="126" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -632,17 +614,9 @@
                       <Component id="boton_remoto" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="boton_moto" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="ventas_hoy" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="vental_total" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace pref="17" max="32767" attributes="0"/>
+                  <EmptySpace pref="44" max="32767" attributes="0"/>
+                  <Component id="limpiar_tabla" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -665,6 +639,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="A&#xd1;O"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boton_anoActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="boton_remoto">
           <Properties>
@@ -698,28 +675,13 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boton_motoActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel10">
+        <Component class="javax.swing.JButton" name="limpiar_tabla">
           <Properties>
-            <Property name="text" type="java.lang.String" value="CANTIDAD DE VEHICULOS VENDIDOS AL DIA"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel11">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="VENTAS TOTALES"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="vental_total">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="Limpiar Tabla"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="vental_totalActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="limpiar_tablaActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="ventas_hoy">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>

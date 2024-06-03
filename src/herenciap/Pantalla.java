@@ -7,6 +7,21 @@ package herenciap;
 import java.util.Map;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
 
 /**
  *
@@ -14,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Pantalla extends javax.swing.JFrame {
     
-    private String[] marcasAuto = {"Toyota","Hyunday" ,"Susuki", "Ford", "Chevrolet","Honda"};
+    private String[] marcasAuto = {"Toyota","Hyundai" ,"Suzuki", "Ford", "Chevrolet","Honda"};
     private String[] marcasMoto = {"Yamaha", "Suzuki", "Honda","KTM","BMW","Kawasaki"};
     private String[] marcasCamion = {"Volvo","Iveco","Mercedes","Isuzu", "MAN","Scania"};
     
@@ -64,11 +79,85 @@ public class Pantalla extends javax.swing.JFrame {
         "Scania", 95000
     );
     private int currentRow = -1;
+    private void mostrarInformacionInicial() {
+        Connection conn = DatabaseConnection.getConnection();
+
+        try {
+            // Cliente que compró más vehículos
+            String maxVehiculosSQL = "SELECT c.nombre, c.rut, SUM(d.cantidad) AS total_vehiculos " +
+                                     "FROM Clientes c " +
+                                     "JOIN Compras com ON c.cliente_id = com.cliente_id " +
+                                     "JOIN Detalle_Compras d ON com.compra_id = d.compra_id " +
+                                     "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id " +
+                                     "GROUP BY c.cliente_id " +
+                                     "ORDER BY total_vehiculos DESC " +
+                                     "LIMIT 1";
+            PreparedStatement pstmtMaxVehiculos = conn.prepareStatement(maxVehiculosSQL);
+            ResultSet rsMaxVehiculos = pstmtMaxVehiculos.executeQuery();
+            String clienteMaxVehiculos = "";
+            if (rsMaxVehiculos.next()) {
+                clienteMaxVehiculos = "Cliente que compró más vehículos: " + rsMaxVehiculos.getString("nombre") +
+                                      " (" + rsMaxVehiculos.getString("rut") + ") con " +
+                                      rsMaxVehiculos.getInt("total_vehiculos") + " vehículos.\n";
+            }
+
+            // Cliente que compró más accesorios
+            String maxAccesoriosSQL = "SELECT c.nombre, c.rut, SUM(d.cantidad) AS total_accesorios " +
+                                      "FROM Clientes c " +
+                                      "JOIN Compras com ON c.cliente_id = com.cliente_id " +
+                                      "JOIN Detalle_Compras d ON com.compra_id = d.compra_id " +
+                                      "JOIN Accesorios a ON d.accesorio_id = a.accesorio_id " +
+                                      "GROUP BY c.cliente_id " +
+                                      "ORDER BY total_accesorios DESC " +
+                                      "LIMIT 1";
+            PreparedStatement pstmtMaxAccesorios = conn.prepareStatement(maxAccesoriosSQL);
+            ResultSet rsMaxAccesorios = pstmtMaxAccesorios.executeQuery();
+            String clienteMaxAccesorios = "";
+            if (rsMaxAccesorios.next()) {
+                clienteMaxAccesorios = "Cliente que compró más accesorios: " + rsMaxAccesorios.getString("nombre") +
+                                       " (" + rsMaxAccesorios.getString("rut") + ") con " +
+                                       rsMaxAccesorios.getInt("total_accesorios") + " accesorios.\n";
+            }
+
+            // Cantidad total de vehículos comprados
+            String totalVehiculosSQL = "SELECT SUM(d.cantidad) AS total_vehiculos " +
+                                       "FROM Detalle_Compras d " +
+                                       "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id";
+            PreparedStatement pstmtTotalVehiculos = conn.prepareStatement(totalVehiculosSQL);
+            ResultSet rsTotalVehiculos = pstmtTotalVehiculos.executeQuery();
+            int totalVehiculos = 0;
+            if (rsTotalVehiculos.next()) {
+                totalVehiculos = rsTotalVehiculos.getInt("total_vehiculos");
+            }
+            String totalVehiculosMsg = "Cantidad total de vehículos comprados: " + totalVehiculos + "\n";
+
+            // Promedio de ventas totales por cantidad de clientes
+            String promedioVentasSQL = "SELECT AVG(com.total) AS promedio_ventas " +
+                                       "FROM Compras com";
+            PreparedStatement pstmtPromedioVentas = conn.prepareStatement(promedioVentasSQL);
+            ResultSet rsPromedioVentas = pstmtPromedioVentas.executeQuery();
+            double promedioVentas = 0;
+            if (rsPromedioVentas.next()) {
+                promedioVentas = rsPromedioVentas.getDouble("promedio_ventas");
+            }
+            String promedioVentasMsg = "Promedio de ventas totales por cantidad de clientes: " + promedioVentas + "\n";
+
+            // Mostrar mensaje
+            String mensaje = clienteMaxVehiculos + clienteMaxAccesorios + totalVehiculosMsg + promedioVentasMsg;
+            JOptionPane.showMessageDialog(this, mensaje);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al obtener la información inicial: " + e.getMessage());
+        }
+    }
+
     /**
      * Creates new form Pantalla
      */
     public Pantalla() {
         initComponents();
+        mostrarInformacionInicial();
     }
 
     /**
@@ -125,10 +214,7 @@ public class Pantalla extends javax.swing.JFrame {
         boton_camion = new javax.swing.JButton();
         boton_auto = new javax.swing.JButton();
         boton_moto = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        vental_total = new javax.swing.JTextField();
-        ventas_hoy = new javax.swing.JTextField();
+        limpiar_tabla = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -396,7 +482,7 @@ public class Pantalla extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true, true, false, false, false, false, false, false
+                false, false, false, false, false, false, false, true, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -425,6 +511,11 @@ public class Pantalla extends javax.swing.JFrame {
         });
 
         boton_ano.setText("AÑO");
+        boton_ano.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_anoActionPerformed(evt);
+            }
+        });
 
         boton_remoto.setText("CONTROL REMOTO");
         boton_remoto.addActionListener(new java.awt.event.ActionListener() {
@@ -454,18 +545,12 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setText("CANTIDAD DE VEHICULOS VENDIDOS AL DIA");
-
-        jLabel11.setText("VENTAS TOTALES");
-
-        vental_total.setEditable(false);
-        vental_total.addActionListener(new java.awt.event.ActionListener() {
+        limpiar_tabla.setText("Limpiar Tabla");
+        limpiar_tabla.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vental_totalActionPerformed(evt);
+                limpiar_tablaActionPerformed(evt);
             }
         });
-
-        ventas_hoy.setEditable(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -474,32 +559,20 @@ public class Pantalla extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(boton_ano)
-                                    .addComponent(boton_remoto)
-                                    .addComponent(boton_marca))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(boton_auto)
-                                    .addComponent(boton_camion)
-                                    .addComponent(boton_moto))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ventas_hoy, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(vental_total, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(104, 104, 104))))
+                            .addComponent(boton_ano)
+                            .addComponent(boton_remoto)
+                            .addComponent(boton_marca)
+                            .addComponent(limpiar_tabla))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(boton_auto)
+                            .addComponent(boton_camion)
+                            .addComponent(boton_moto))))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -518,15 +591,9 @@ public class Pantalla extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boton_remoto)
                     .addComponent(boton_moto))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(ventas_hoy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(vental_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(limpiar_tabla)
+                .addGap(30, 30, 30))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -539,7 +606,7 @@ public class Pantalla extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 837, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -582,14 +649,19 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void boton_camionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_camionActionPerformed
         // TODO add your handling code here:
+        obtenerDatosPorTipo("camion");
     }//GEN-LAST:event_boton_camionActionPerformed
 
     private void boton_motoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_motoActionPerformed
         // TODO add your handling code here:
+        obtenerDatosPorTipo("moto");
     }//GEN-LAST:event_boton_motoActionPerformed
 
     private void boton_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_marcaActionPerformed
         // TODO add your handling code here:
+        String marca = (String) tipo_marca.getSelectedItem();
+        obtenerDatosPorMarca(marca);
+        
     }//GEN-LAST:event_boton_marcaActionPerformed
 
     private void text_añoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_añoActionPerformed
@@ -611,121 +683,157 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
         // TODO add your handling code here:
+        boolean found = false;
+        int existingRowIndex = -1;
+
         String vehiculo = (String) tipo_vehiculo.getSelectedItem();
         String marca = (String) tipo_marca.getSelectedItem();
-        String accesorio = (String) tipo_accesorios.getSelectedItem();
-        String control = control_si.isSelected() ? "SI" : "NO";
+        String acc1 = (String) tipo_accesorios.getSelectedItem();
         String anio = text_año.getText();
         String cantidadStr = text_cantidad.getText();
-
-        if (boton_vehiculo.isSelected()) {
-            // Validar que vehículo, año y cantidad estén llenos y sean numéricos
-            if (vehiculo.equals("Seleccionar") || marca.equals("Item 1") || anio.isEmpty() || cantidadStr.isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Por favor complete todos los campos requeridos.");
-                return;
-            }
-            if (!anio.matches("\\d+") || !cantidadStr.matches("\\d+")) {
-                javax.swing.JOptionPane.showMessageDialog(this, "El año y la cantidad deben ser números.");
-                return;
-            }
-        } else if (boton_accesorios.isSelected()) {
-            // Validar que la cantidad esté llena y sea numérica
-            if (cantidadStr.isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Por favor ingrese la cantidad.");
-                return;
-            }
-            if (!cantidadStr.matches("\\d+")) {
-                javax.swing.JOptionPane.showMessageDialog(this, "La cantidad debe ser un número.");
-                return;
-            }
-        }
+        String control = control_si.isSelected() ? "SI" : "NO";
 
         int cantidad = Integer.parseInt(cantidadStr);
-        int precioAccesorio = 0;
-        int precioMarca = 0;
+        int precio = 0;
 
+        // Obtener el precio de la marca y accesorio
         switch (vehiculo.toLowerCase()) {
             case "auto":
-                precioMarca = preciosMarcasAuto.getOrDefault(marca, 0);
-                precioAccesorio = preciosAccesoriosAuto.getOrDefault(accesorio, 0);
+                precio = preciosMarcasAuto.getOrDefault(marca, 0);
                 break;
             case "moto":
-                precioMarca = preciosMarcasMoto.getOrDefault(marca, 0);
-                precioAccesorio = preciosAccesoriosMoto.getOrDefault(accesorio, 0);
+                precio = preciosMarcasMoto.getOrDefault(marca, 0);
                 break;
             case "camion":
-                precioMarca = preciosMarcasCamion.getOrDefault(marca, 0);
-                precioAccesorio = preciosAccesoriosCamion.getOrDefault(accesorio, 0);
+                precio = preciosMarcasCamion.getOrDefault(marca, 0);
                 break;
+        }
+
+        int precioAccesorio = 0;
+        if (tipo_accesorios.isEnabled()) {
+            switch (vehiculo.toLowerCase()) {
+                case "auto":
+                    precioAccesorio = preciosAccesoriosAuto.getOrDefault(acc1, 0);
+                    break;
+                case "moto":
+                    precioAccesorio = preciosAccesoriosMoto.getOrDefault(acc1, 0);
+                    break;
+                case "camion":
+                    precioAccesorio = preciosAccesoriosCamion.getOrDefault(acc1, 0);
+                    break;
+            }
         }
 
         DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-
-        if (boton_vehiculo.isSelected()) {
-            currentRow = model.getRowCount();
-            model.addRow(new Object[]{vehiculo, marca, "-", 0, "-", 0, control, anio, precioMarca, cantidad, precioMarca * cantidad});
-        } else if (boton_accesorios.isSelected()) {
-            boolean found = false;
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if (model.getValueAt(i, 0).equals(vehiculo) && model.getValueAt(i, 1).equals(marca)) {
-                    found = true;
-                    currentRow = i;
-                    break;
-                }
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).equals(vehiculo) && model.getValueAt(i, 1).equals(marca) && model.getValueAt(i, 7).equals(anio)) {
+                found = true;
+                existingRowIndex = i;
+                break;
             }
-
-            if (!found) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un vehículo existente para agregar accesorios.");
-                return; // Salir del método si no se encuentra un vehículo correspondiente
-            }
-
-            String acc1 = (String) model.getValueAt(currentRow, 2);
-            int cant1 = (int) model.getValueAt(currentRow, 3);
-            String acc2 = (String) model.getValueAt(currentRow, 4);
-            int cant2 = (int) model.getValueAt(currentRow, 5);
-
-            if (esAccesorio1(accesorio)) {
-                if (acc1.equals("-") || acc1.equals(accesorio)) {
-                    model.setValueAt(accesorio, currentRow, 2);
-                    model.setValueAt(cant1 + cantidad, currentRow, 3);
-                } else if (!acc1.equals(accesorio) && acc2.equals("-")) {
-                    model.setValueAt(accesorio, currentRow, 4);
-                    model.setValueAt(cantidad, currentRow, 5);
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Ya existen dos accesorios diferentes para este vehículo.");
-                    return;
-                }
-            } else if (esAccesorio2(accesorio)) {
-                if (acc2.equals("-") || acc2.equals(accesorio)) {
-                    model.setValueAt(accesorio, currentRow, 4);
-                    model.setValueAt(cant2 + cantidad, currentRow, 5);
-                } else if (!acc2.equals(accesorio) && acc1.equals("-")) {
-                    model.setValueAt(accesorio, currentRow, 2);
-                    model.setValueAt(cantidad, currentRow, 3);
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Ya existen dos accesorios diferentes para este vehículo.");
-                    return;
-                }
-            }
-
-            int precioTotal = (int) model.getValueAt(currentRow, 8) + precioAccesorio * cantidad;
-            model.setValueAt(precioTotal, currentRow, 8);
-            int cantidadTotal = (int) model.getValueAt(currentRow, 9) + cantidad;
-            model.setValueAt(cantidadTotal, currentRow, 9);
-            model.setValueAt(precioTotal * cantidadTotal, currentRow, 10);
-
-            currentRow = -1;  // Reset current row after adding accessories
         }
 
-        // Limpiar los campos de texto
-        if (tipo_accesorios.getItemCount() > 0) {
-            tipo_accesorios.setSelectedIndex(0);
+        if (found) {
+            int existingCant1 = (int) model.getValueAt(existingRowIndex, 3);
+            int existingCant2 = (int) model.getValueAt(existingRowIndex, 5);
+            if (model.getValueAt(existingRowIndex, 2).equals(acc1)) {
+                model.setValueAt(existingCant1 + cantidad, existingRowIndex, 3);
+            } else if (model.getValueAt(existingRowIndex, 4).equals(acc1) || model.getValueAt(existingRowIndex, 4).equals("-")) {
+                model.setValueAt(acc1, existingRowIndex, 4);
+                model.setValueAt(existingCant2 + cantidad, existingRowIndex, 5);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "No se pueden agregar más de dos accesorios diferentes por vehículo.");
+            }
+        } else {
+            model.addRow(new Object[]{vehiculo, marca, acc1, cantidad, "-", 0, control, anio, precio + precioAccesorio, cantidad, (precio + precioAccesorio) * cantidad});
         }
-        control_si.setSelected(false);
-        control_no.setSelected(false);
-        text_año.setText("");
+
+        // Actualizar subtotal y descuento
+        actualizarTotales();
+    }
+
+    private void actualizarTotales() {
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+        int subtotalValue = 0;
+        int cantidadTotal = 0;
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int cantidadVehiculos = (int) model.getValueAt(i, 9);
+            int importe = (int) model.getValueAt(i, 10);
+            subtotalValue += importe;
+            cantidadTotal += cantidadVehiculos;
+        }
+
+        int descuentoValue = calcularDescuento(subtotalValue, cantidadTotal);
+        subtotal.setText(String.valueOf(subtotalValue));
+        descuento.setText(String.valueOf(descuentoValue));
+        total.setText(String.valueOf(subtotalValue - descuentoValue));
         text_cantidad.setText("");
     }//GEN-LAST:event_agregarActionPerformed
+private int calcularDescuento(int subtotal, int cantidadTotal) {
+    int descuento = 0;
+    if (cantidadTotal > 10000) {
+        descuento = (int) (subtotal * 0.10);
+    } else if (cantidadTotal >= 5000) {
+        descuento = (int) (subtotal * 0.05);
+    } else if (cantidadTotal >= 1000) {
+        descuento = (int) (subtotal * 0.03);
+    } else if (cantidadTotal < 1000) {
+        descuento = (int) (subtotal * 0.01);
+    }
+    return descuento;
+}
+
+private void calcularSubtotalYDescuento() {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    int subtotalValue = 0;
+    int cantidadTotal = 0;
+
+    for (int i = 0; i < model.getRowCount(); i++) {
+        subtotalValue += (int) model.getValueAt(i, 10);
+        cantidadTotal += (int) model.getValueAt(i, 9);
+    }
+
+    int descuentoValue = calcularDescuento(subtotalValue, cantidadTotal);
+    int totalValue = subtotalValue - descuentoValue;
+
+    subtotal.setText(String.valueOf(subtotalValue));
+    descuento.setText(String.valueOf(descuentoValue));
+    total.setText(String.valueOf(totalValue));
+}
+private String obtenerResumenDetalle(String nombre, String rut, int subtotal, int descuento, int total) {
+    int cantidadVehiculos = 0;
+    int cantidadAccesorios = 0;
+    int totalPrecioAccesorios = 0;
+    int totalPrecioVehiculos = 0;
+
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    for (int i = 0; i < model.getRowCount(); i++) {
+        cantidadVehiculos += (int) model.getValueAt(i, 9);
+        if (!model.getValueAt(i, 2).equals("-")) {
+            cantidadAccesorios += (int) model.getValueAt(i, 3);
+            totalPrecioAccesorios += preciosAccesoriosAuto.getOrDefault((String) model.getValueAt(i, 2), 0) * (int) model.getValueAt(i, 3);
+        }
+        if (!model.getValueAt(i, 4).equals("-")) {
+            cantidadAccesorios += (int) model.getValueAt(i, 5);
+            totalPrecioAccesorios += preciosAccesoriosAuto.getOrDefault((String) model.getValueAt(i, 4), 0) * (int) model.getValueAt(i, 5);
+        }
+        totalPrecioVehiculos += (int) model.getValueAt(i, 8) * (int) model.getValueAt(i, 9);
+    }
+
+    StringBuilder resumen = new StringBuilder();
+    resumen.append("CLIENTE: ").append(nombre).append("\n");
+    resumen.append("RUT: ").append(rut).append("\n");
+    resumen.append("CANTIDAD (Vehículos Total): ").append(cantidadVehiculos).append("\n");
+    resumen.append("CANTIDAD (Accesorios Total): ").append(cantidadAccesorios).append("\n");
+    resumen.append("Total precio Accesorios: ").append(totalPrecioAccesorios).append("\n");
+    resumen.append("TOTAL precio Vehiculos: ").append(totalPrecioVehiculos).append("\n");
+    resumen.append("TOTAL con descuento ").append(descuento).append("%: ").append(total - descuento).append("\n");
+    resumen.append("TOTAL GENERAL: ").append(total).append("\n");
+
+    return resumen.toString();
+}
+
 
 private boolean esAccesorio1(String accesorio) {
     return accesorio.equals("Puertas") || accesorio.equals("Pedales") || accesorio.equals("Tolva");
@@ -736,6 +844,179 @@ private boolean esAccesorio2(String accesorio) {
 }
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         // TODO add your handling code here:
+        String nombre = text_name.getText();
+        String rut = text_rut.getText();
+
+        if (nombre.isEmpty() || rut.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Nombre y Rut son obligatorios.");
+            return;
+        }
+
+        Connection conn = DatabaseConnection.getConnection();
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+
+        try {
+            conn.setAutoCommit(false); // Start transaction
+
+            // Insert into Clientes table
+            String insertClienteSQL = "INSERT INTO Clientes (nombre, rut) VALUES (?, ?)";
+            PreparedStatement pstmtCliente = conn.prepareStatement(insertClienteSQL, Statement.RETURN_GENERATED_KEYS);
+            pstmtCliente.setString(1, nombre);
+            pstmtCliente.setString(2, rut);
+            pstmtCliente.executeUpdate();
+
+            ResultSet rs = pstmtCliente.getGeneratedKeys();
+            int clienteId = 0;
+            if (rs.next()) {
+                clienteId = rs.getInt(1);
+            }
+
+            // Calcular subtotal y descuento
+            int subtotalValue = Integer.parseInt(subtotal.getText());
+            int descuentoValue = Integer.parseInt(descuento.getText());
+            int totalValue = Integer.parseInt(total.getText());
+
+            // Insert into Compras table
+            String insertCompraSQL = "INSERT INTO Compras (cliente_id, fecha, subtotal, descuento, total) VALUES (?, CURDATE(), ?, ?, ?)";
+            PreparedStatement pstmtCompra = conn.prepareStatement(insertCompraSQL, Statement.RETURN_GENERATED_KEYS);
+            pstmtCompra.setInt(1, clienteId);
+            pstmtCompra.setInt(2, subtotalValue);
+            pstmtCompra.setInt(3, descuentoValue);
+            pstmtCompra.setInt(4, totalValue);
+            pstmtCompra.executeUpdate();
+
+            rs = pstmtCompra.getGeneratedKeys();
+            int compraId = 0;
+            if (rs.next()) {
+                compraId = rs.getInt(1);
+            }
+
+            // Insert into Vehiculos and Accesorios and Detalle_Compras table
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String vehiculo = (String) model.getValueAt(i, 0);
+                String marca = (String) model.getValueAt(i, 1);
+                String acc1 = (String) model.getValueAt(i, 2);
+                int cant1 = (int) model.getValueAt(i, 3);
+                String acc2 = (String) model.getValueAt(i, 4);
+                int cant2 = (int) model.getValueAt(i, 5);
+                String control = (String) model.getValueAt(i, 6);
+                String anio = (String) model.getValueAt(i, 7);
+                int precio = (int) model.getValueAt(i, 8);
+                int cantidad = (int) model.getValueAt(i, 9);
+                int importe = (int) model.getValueAt(i, 10);
+
+                // Validar el año antes de intentar insertarlo
+                int anioFabricacion;
+                try {
+                    anioFabricacion = Integer.parseInt(anio);
+                    if (anioFabricacion < 1901 || anioFabricacion > 2155) {
+                        throw new NumberFormatException("Año fuera de rango");
+                    }
+                } catch (NumberFormatException e) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "El año de fabricación debe ser un número entre 1901 y 2155.");
+                    return;
+                }
+
+                String insertVehiculoSQL = "INSERT INTO Vehiculos (tipo, marca, cantidad_ruedas, control_remoto, anio_fabricacion) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pstmtVehiculo = conn.prepareStatement(insertVehiculoSQL, Statement.RETURN_GENERATED_KEYS);
+                pstmtVehiculo.setString(1, vehiculo);
+                pstmtVehiculo.setString(2, marca);
+                pstmtVehiculo.setInt(3, cantidad);
+                pstmtVehiculo.setBoolean(4, control.equals("SI"));
+                pstmtVehiculo.setInt(5, anioFabricacion);
+                pstmtVehiculo.executeUpdate();
+
+                rs = pstmtVehiculo.getGeneratedKeys();
+                int vehiculoId = 0;
+                if (rs.next()) {
+                    vehiculoId = rs.getInt(1);
+                }
+
+                // Insertar datos en Detalle_Compras para el vehículo
+                String insertDetalleSQLVehiculo = "INSERT INTO Detalle_Compras (compra_id, vehiculo_id, accesorio_id, cantidad, precio_unitario, tipo) VALUES (?, ?, ?, ?, ?, ?)";
+                PreparedStatement pstmtDetalleVehiculo = conn.prepareStatement(insertDetalleSQLVehiculo);
+                pstmtDetalleVehiculo.setInt(1, compraId);
+                pstmtDetalleVehiculo.setInt(2, vehiculoId);
+                pstmtDetalleVehiculo.setNull(3, java.sql.Types.INTEGER);
+                pstmtDetalleVehiculo.setInt(4, cantidad);
+                pstmtDetalleVehiculo.setInt(5, precio);
+                pstmtDetalleVehiculo.setString(6, "Vehículo");
+                pstmtDetalleVehiculo.executeUpdate();
+
+                if (!acc1.equals("-")) {
+                    String insertAccesorioSQL1 = "INSERT INTO Accesorios (vehiculo_id, tipo_accesorio, precio) VALUES (?, ?, ?)";
+                    PreparedStatement pstmtAccesorio1 = conn.prepareStatement(insertAccesorioSQL1, Statement.RETURN_GENERATED_KEYS);
+                    pstmtAccesorio1.setInt(1, vehiculoId);
+                    pstmtAccesorio1.setString(2, acc1);
+                    pstmtAccesorio1.setInt(3, preciosAccesoriosAuto.getOrDefault(acc1, 0));
+                    pstmtAccesorio1.executeUpdate();
+
+                    rs = pstmtAccesorio1.getGeneratedKeys();
+                    int accesorioId1 = 0;
+                    if (rs.next()) {
+                        accesorioId1 = rs.getInt(1);
+                    }
+
+                    String insertDetalleSQL1 = "INSERT INTO Detalle_Compras (compra_id, vehiculo_id, accesorio_id, cantidad, precio_unitario, tipo) VALUES (?, ?, ?, ?, ?, ?)";
+                    PreparedStatement pstmtDetalle1 = conn.prepareStatement(insertDetalleSQL1);
+                    pstmtDetalle1.setInt(1, compraId);
+                    pstmtDetalle1.setInt(2, vehiculoId);
+                    pstmtDetalle1.setInt(3, accesorioId1);
+                    pstmtDetalle1.setInt(4, cant1);
+                    pstmtDetalle1.setInt(5, preciosAccesoriosAuto.getOrDefault(acc1, 0));
+                    pstmtDetalle1.setString(6, "Accesorio");
+                    pstmtDetalle1.executeUpdate();
+                }
+
+                if (!acc2.equals("-")) {
+                    String insertAccesorioSQL2 = "INSERT INTO Accesorios (vehiculo_id, tipo_accesorio, precio) VALUES (?, ?, ?)";
+                    PreparedStatement pstmtAccesorio2 = conn.prepareStatement(insertAccesorioSQL2, Statement.RETURN_GENERATED_KEYS);
+                    pstmtAccesorio2.setInt(1, vehiculoId);
+                    pstmtAccesorio2.setString(2, acc2);
+                    pstmtAccesorio2.setInt(3, preciosAccesoriosAuto.getOrDefault(acc2, 0));
+                    pstmtAccesorio2.executeUpdate();
+
+                    rs = pstmtAccesorio2.getGeneratedKeys();
+                    int accesorioId2 = 0;
+                    if (rs.next()) {
+                        accesorioId2 = rs.getInt(1);
+                    }
+
+                    String insertDetalleSQL2 = "INSERT INTO Detalle_Compras (compra_id, vehiculo_id, accesorio_id, cantidad, precio_unitario, tipo) VALUES (?, ?, ?, ?, ?, ?)";
+                    PreparedStatement pstmtDetalle2 = conn.prepareStatement(insertDetalleSQL2);
+                    pstmtDetalle2.setInt(1, compraId);
+                    pstmtDetalle2.setInt(2, vehiculoId);
+                    pstmtDetalle2.setInt(3, accesorioId2);
+                    pstmtDetalle2.setInt(4, cant2);
+                    pstmtDetalle2.setInt(5, preciosAccesoriosAuto.getOrDefault(acc2, 0));
+                    pstmtDetalle2.setString(6, "Accesorio");
+                    pstmtDetalle2.executeUpdate();
+                }
+            }
+
+            conn.commit(); // Commit transaction
+
+            // Mostrar resumen detallado
+            javax.swing.JOptionPane.showMessageDialog(this, "Datos guardados correctamente.\n" + obtenerResumenDetalle(nombre, rut, subtotalValue, descuentoValue, totalValue));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar los datos: " + e.getMessage());
+            try {
+                if (conn != null) {
+                    conn.rollback(); // Rollback transaction on error
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true); // Reset auto commit
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_guardarActionPerformed
 
     private void text_rutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_text_rutActionPerformed
@@ -748,14 +1029,12 @@ private boolean esAccesorio2(String accesorio) {
 
     private void boton_remotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_remotoActionPerformed
         // TODO add your handling code here:
+        obtenerDatosPorControlRemoto(); 
     }//GEN-LAST:event_boton_remotoActionPerformed
-
-    private void vental_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vental_totalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_vental_totalActionPerformed
 
     private void boton_autoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_autoActionPerformed
         // TODO add your handling code here:
+        obtenerDatosPorTipo("auto");
     }//GEN-LAST:event_boton_autoActionPerformed
 
     private void control_siActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_control_siActionPerformed
@@ -807,6 +1086,170 @@ private boolean esAccesorio2(String accesorio) {
     private void tipo_accesoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_accesoriosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tipo_accesoriosActionPerformed
+
+    private void boton_anoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_anoActionPerformed
+        // TODO add your handling code here:
+        String anio = text_año.getText();
+        obtenerDatosPorAnio(anio);
+    }//GEN-LAST:event_boton_anoActionPerformed
+
+    private void limpiar_tablaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiar_tablaActionPerformed
+        // TODO add your handling code here:
+        limpiarTabla();
+    }//GEN-LAST:event_limpiar_tablaActionPerformed
+
+private void obtenerDatosPorTipo(String tipo) {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    model.setRowCount(0); // Limpiar la tabla
+
+    String query = "SELECT v.tipo, v.marca, d.cantidad, d.precio_unitario, d.precio_unitario * d.cantidad as importe, c.fecha " +
+                   "FROM Detalle_Compras d " +
+                   "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id " +
+                   "JOIN Compras c ON d.compra_id = c.compra_id " +
+                   "WHERE v.tipo = ? AND c.fecha = CURDATE()";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        pstmt.setString(1, tipo);
+        ResultSet rs = pstmt.executeQuery();
+
+        int cantidadTotal = 0;
+        int ventasTotales = 0;
+
+        while (rs.next()) {
+            String marca = rs.getString("marca");
+            int cantidad = rs.getInt("cantidad");
+            int precioUnitario = rs.getInt("precio_unitario");
+            int importe = rs.getInt("importe");
+            cantidadTotal += cantidad;
+            ventasTotales += importe;
+
+            model.addRow(new Object[]{tipo, marca, "-", cantidad, "-", 0, "-", "-", precioUnitario, cantidad, importe});
+        }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Cantidad de " + tipo + " vendidos al día: " + cantidadTotal +
+                                                  "\nVentas totales diarias: " + ventasTotales);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+private void obtenerDatosPorMarca(String marca) {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    model.setRowCount(0); // Limpiar la tabla
+
+    String query = "SELECT v.tipo, v.marca, d.cantidad, d.precio_unitario, d.precio_unitario * d.cantidad as importe, c.fecha " +
+                   "FROM Detalle_Compras d " +
+                   "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id " +
+                   "JOIN Compras c ON d.compra_id = c.compra_id " +
+                   "WHERE v.marca = ? AND c.fecha = CURDATE()";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        pstmt.setString(1, marca);
+        ResultSet rs = pstmt.executeQuery();
+
+        int cantidadTotal = 0;
+        int ventasTotales = 0;
+
+        while (rs.next()) {
+            String tipo = rs.getString("tipo");
+            int cantidad = rs.getInt("cantidad");
+            int precioUnitario = rs.getInt("precio_unitario");
+            int importe = rs.getInt("importe");
+            cantidadTotal += cantidad;
+            ventasTotales += importe;
+
+            model.addRow(new Object[]{tipo, marca, "-", cantidad, "-", 0, "-", "-", precioUnitario, cantidad, importe});
+        }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Cantidad de vehículos de la marca " + marca + " vendidos al día: " + cantidadTotal +
+                                                  "\nVentas totales diarias: " + ventasTotales);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+private void obtenerDatosPorAnio(String anio) {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    model.setRowCount(0); // Limpiar la tabla
+
+    String query = "SELECT v.tipo, v.marca, d.cantidad, d.precio_unitario, d.precio_unitario * d.cantidad as importe, c.fecha " +
+                   "FROM Detalle_Compras d " +
+                   "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id " +
+                   "JOIN Compras c ON d.compra_id = c.compra_id " +
+                   "WHERE v.anio_fabricacion = ? AND c.fecha = CURDATE()";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        pstmt.setString(1, anio);
+        ResultSet rs = pstmt.executeQuery();
+
+        int cantidadTotal = 0;
+        int ventasTotales = 0;
+
+        while (rs.next()) {
+            String tipo = rs.getString("tipo");
+            String marca = rs.getString("marca");
+            int cantidad = rs.getInt("cantidad");
+            int precioUnitario = rs.getInt("precio_unitario");
+            int importe = rs.getInt("importe");
+            cantidadTotal += cantidad;
+            ventasTotales += importe;
+
+            model.addRow(new Object[]{tipo, marca, "-", cantidad, "-", 0, "-", anio, precioUnitario, cantidad, importe});
+        }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Cantidad de vehículos del año " + anio + " vendidos al día: " + cantidadTotal +
+                                                  "\nVentas totales diarias: " + ventasTotales);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+private void obtenerDatosPorControlRemoto() {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    model.setRowCount(0); // Limpiar la tabla
+
+    String query = "SELECT v.tipo, v.marca, d.cantidad, d.precio_unitario, d.precio_unitario * d.cantidad as importe, c.fecha " +
+                   "FROM Detalle_Compras d " +
+                   "JOIN Vehiculos v ON d.vehiculo_id = v.vehiculo_id " +
+                   "JOIN Compras c ON d.compra_id = c.compra_id " +
+                   "WHERE v.control_remoto = TRUE AND c.fecha = CURDATE()";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        ResultSet rs = pstmt.executeQuery();
+
+        int cantidadTotal = 0;
+        int ventasTotales = 0;
+
+        while (rs.next()) {
+            String tipo = rs.getString("tipo");
+            String marca = rs.getString("marca");
+            int cantidad = rs.getInt("cantidad");
+            int precioUnitario = rs.getInt("precio_unitario");
+            int importe = rs.getInt("importe");
+            cantidadTotal += cantidad;
+            ventasTotales += importe;
+
+            model.addRow(new Object[]{tipo, marca, "-", cantidad, "-", 0, "SI", "-", precioUnitario, cantidad, importe});
+        }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Cantidad de vehículos con control remoto vendidos al día: " + cantidadTotal +
+                                                  "\nVentas totales diarias: " + ventasTotales);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+private void limpiarTabla() {
+    DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+    model.setRowCount(0); // Esto limpiará todas las filas de la tabla
+}
 
     /**
      * @param args the command line arguments
@@ -860,8 +1303,6 @@ private boolean esAccesorio2(String accesorio) {
     private javax.swing.ButtonGroup grupobotones_remoto;
     private javax.swing.JButton guardar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -881,6 +1322,7 @@ private boolean esAccesorio2(String accesorio) {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JButton limpiar_tabla;
     private javax.swing.JTextField subtotal;
     private javax.swing.JTable tabla;
     private javax.swing.JTextField text_año;
@@ -891,7 +1333,5 @@ private boolean esAccesorio2(String accesorio) {
     private javax.swing.JComboBox<String> tipo_marca;
     private javax.swing.JComboBox<String> tipo_vehiculo;
     private javax.swing.JTextField total;
-    private javax.swing.JTextField vental_total;
-    private javax.swing.JTextField ventas_hoy;
     // End of variables declaration//GEN-END:variables
 }

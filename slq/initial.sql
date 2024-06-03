@@ -68,3 +68,5 @@ MODIFY COLUMN total INT;
 
 ALTER TABLE Detalle_Compras
 MODIFY COLUMN precio_unitario INT;
+
+ALTER TABLE Detalle_Compras ADD COLUMN tipo VARCHAR(50) NOT NULL;
