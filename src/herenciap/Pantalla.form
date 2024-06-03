@@ -17,6 +17,8 @@
         </DimensionLayout>
       </Layout>
     </Container>
+    <Component class="javax.swing.ButtonGroup" name="grupoBotones">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -303,6 +305,12 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="boton_vehiculo">
           <Properties>
+            <Property name="model" type="javax.swing.ButtonModel" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="default"/>
+            </Property>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="grupoBotones"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="VEHICULO"/>
             <Property name="name" type="java.lang.String" value="boton_vehiculo" noResource="true"/>
           </Properties>
@@ -312,9 +320,18 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="boton_accesorios">
           <Properties>
+            <Property name="model" type="javax.swing.ButtonModel" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="default"/>
+            </Property>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="grupoBotones"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="ACCESORIOS"/>
             <Property name="name" type="java.lang.String" value="boton_accesorios" noResource="true"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boton_accesoriosActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="tipo_vehiculo">
           <Properties>
@@ -323,6 +340,9 @@
             </Property>
             <Property name="name" type="java.lang.String" value="tipo_vehiculo" noResource="true"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tipo_vehiculoActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -363,6 +383,9 @@
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tipo_marcaActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>

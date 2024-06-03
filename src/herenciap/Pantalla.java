@@ -9,6 +9,10 @@ package herenciap;
  * @author mfarias
  */
 public class Pantalla extends javax.swing.JFrame {
+    
+    private String[] marcasAuto = {"Toyota","Hyunday" ,"Susuki", "Ford", "Chevrolet","Honda"};
+    private String[] marcasMoto = {"Yamaha", "Suzuki", "Honda","KTM","BMW","Kawasaki"};
+    private String[] marcasCamion = {"Volvo","Iveco","Mercedes","Isuzu", "MAN","Scania"};
 
     /**
      * Creates new form Pantalla
@@ -27,6 +31,7 @@ public class Pantalla extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        grupoBotones = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -118,6 +123,7 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
+        grupoBotones.add(boton_vehiculo);
         boton_vehiculo.setText("VEHICULO");
         boton_vehiculo.setName("boton_vehiculo"); // NOI18N
         boton_vehiculo.addActionListener(new java.awt.event.ActionListener() {
@@ -126,11 +132,22 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
+        grupoBotones.add(boton_accesorios);
         boton_accesorios.setText("ACCESORIOS");
         boton_accesorios.setName("boton_accesorios"); // NOI18N
+        boton_accesorios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_accesoriosActionPerformed(evt);
+            }
+        });
 
         tipo_vehiculo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecionar","auto", "moto", "camion" }));
         tipo_vehiculo.setName("tipo_vehiculo"); // NOI18N
+        tipo_vehiculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipo_vehiculoActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("VEHICULO");
 
@@ -139,6 +156,11 @@ public class Pantalla extends javax.swing.JFrame {
         jLabel4.setText("ACCESORIOS");
 
         tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        tipo_marca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipo_marcaActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("MARCA");
 
@@ -510,6 +532,10 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void boton_vehiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_vehiculoActionPerformed
         // TODO add your handling code here:
+        control_si.setEnabled(true);
+        control_no.setEnabled(true);
+        tipo_vehiculo.setEnabled(true);
+        tipo_accesorios.setEnabled(false);
     }//GEN-LAST:event_boton_vehiculoActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
@@ -547,6 +573,39 @@ public class Pantalla extends javax.swing.JFrame {
     private void control_noActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_control_noActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_control_noActionPerformed
+
+    private void boton_accesoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_accesoriosActionPerformed
+        // TODO add your handling code here:
+        control_si.setEnabled(false);
+        control_no.setEnabled(false);
+        tipo_vehiculo.setEnabled(false);
+        tipo_accesorios.setEnabled(true);
+    }//GEN-LAST:event_boton_accesoriosActionPerformed
+
+    private void tipo_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_marcaActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_tipo_marcaActionPerformed
+
+    private void tipo_vehiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipo_vehiculoActionPerformed
+        // TODO add your handling code here:
+        String tipo = (String) tipo_vehiculo.getSelectedItem();
+        
+        switch (tipo.toLowerCase()) {
+            case "auto":
+                tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasAuto));
+                break;
+            case "moto":
+                tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasMoto));
+                break;
+            case "camion":
+                tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(marcasCamion));
+                break;
+            default:
+                tipo_marca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{}));
+                break;
+        }
+    }//GEN-LAST:event_tipo_vehiculoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -596,6 +655,7 @@ public class Pantalla extends javax.swing.JFrame {
     private javax.swing.JRadioButton control_no;
     private javax.swing.JRadioButton control_si;
     private javax.swing.JTextField descuento;
+    private javax.swing.ButtonGroup grupoBotones;
     private javax.swing.JButton guardar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
