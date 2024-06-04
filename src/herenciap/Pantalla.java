@@ -33,9 +33,9 @@ public class Pantalla extends javax.swing.JFrame {
     private String[] marcasMoto = {"Yamaha", "Suzuki", "Honda","KTM","BMW","Kawasaki"};
     private String[] marcasCamion = {"Volvo","Iveco","Mercedes","Isuzu", "MAN","Scania"};
     
-    private String[] accesoriosAuto = {"Sin elegir","Puertas", "Luces"};
-    private String[] accesoriosMoto = {"Sin elegir","Pedales", "Espejos"};
-    private String[] accesoriosCamion = {"Sin elegir","Tolva", "Ejes"};
+    private String[] accesoriosAuto = {"","Puertas", "Luces"};
+    private String[] accesoriosMoto = {"","Pedales", "Espejos"};
+    private String[] accesoriosCamion = {"","Tolva", "Ejes"};
     
     private Map<String, Integer> preciosAccesoriosAuto = Map.of(
         "Puertas", 1000,
@@ -682,7 +682,27 @@ public class Pantalla extends javax.swing.JFrame {
     }//GEN-LAST:event_boton_vehiculoActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        // TODO add your handling code here:
+        // Validar que los campos obligatorios no estén vacíos
+        if (tipo_vehiculo.getSelectedItem().equals("Seleccionar")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un tipo de vehículo.");
+            return;
+        }
+
+        if (text_cantidad.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar la cantidad.");
+            return;
+        }
+
+        if (boton_vehiculo.isSelected() && text_año.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar el año.");
+            return;
+        }
+
+        if (!control_si.isSelected() && !control_no.isSelected()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar si tiene control remoto o no.");
+            return;
+        }
+
         boolean found = false;
         int existingRowIndex = -1;
 
@@ -693,10 +713,29 @@ public class Pantalla extends javax.swing.JFrame {
         String cantidadStr = text_cantidad.getText();
         String control = control_si.isSelected() ? "SI" : "NO";
 
-        int cantidad = Integer.parseInt(cantidadStr);
-        int precio = 0;
+        // Validar que la cantidad sea un número
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(cantidadStr);
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "La cantidad debe ser un número.");
+            return;
+        }
 
-        // Obtener el precio de la marca y accesorio
+        // Validar que el año sea un número
+        if (boton_vehiculo.isSelected()) {
+            try {
+                int anioInt = Integer.parseInt(anio);
+                if (anioInt < 1901 || anioInt > 2155) {
+                    throw new NumberFormatException("Año fuera de rango");
+                }
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "El año de fabricación debe ser un número entre 1901 y 2155.");
+                return;
+            }
+        }
+
+        int precio = 0;
         switch (vehiculo.toLowerCase()) {
             case "auto":
                 precio = preciosMarcasAuto.getOrDefault(marca, 0);
@@ -733,19 +772,33 @@ public class Pantalla extends javax.swing.JFrame {
             }
         }
 
+        if (boton_accesorios.isSelected() && !found) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El vehículo no existe en la tabla. No se pueden agregar accesorios a un vehículo que no existe.");
+            return;
+        }
+
         if (found) {
             int existingCant1 = (int) model.getValueAt(existingRowIndex, 3);
             int existingCant2 = (int) model.getValueAt(existingRowIndex, 5);
-            if (model.getValueAt(existingRowIndex, 2).equals(acc1)) {
-                model.setValueAt(existingCant1 + cantidad, existingRowIndex, 3);
-            } else if (model.getValueAt(existingRowIndex, 4).equals(acc1) || model.getValueAt(existingRowIndex, 4).equals("-")) {
-                model.setValueAt(acc1, existingRowIndex, 4);
-                model.setValueAt(existingCant2 + cantidad, existingRowIndex, 5);
+            if (boton_accesorios.isSelected()) {
+                if (model.getValueAt(existingRowIndex, 2).equals("-") || model.getValueAt(existingRowIndex, 2).equals(acc1)) {
+                    model.setValueAt(acc1, existingRowIndex, 2);
+                    model.setValueAt(existingCant1 + cantidad, existingRowIndex, 3);
+                } else if (model.getValueAt(existingRowIndex, 4).equals("-") || model.getValueAt(existingRowIndex, 4).equals(acc1)) {
+                    model.setValueAt(acc1, existingRowIndex, 4);
+                    model.setValueAt(existingCant2 + cantidad, existingRowIndex, 5);
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "No se pueden agregar más de dos accesorios diferentes por vehículo.");
+                }
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se pueden agregar más de dos accesorios diferentes por vehículo.");
+                javax.swing.JOptionPane.showMessageDialog(this, "No se pueden agregar más vehículos iguales.");
             }
         } else {
-            model.addRow(new Object[]{vehiculo, marca, acc1, cantidad, "-", 0, control, anio, precio + precioAccesorio, cantidad, (precio + precioAccesorio) * cantidad});
+            if (boton_vehiculo.isSelected()) {
+                model.addRow(new Object[]{vehiculo, marca, "-", 0, "-", 0, control, anio, precio, cantidad, precio * cantidad});
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Seleccione el botón correcto para agregar.");
+            }
         }
 
         // Actualizar subtotal y descuento
